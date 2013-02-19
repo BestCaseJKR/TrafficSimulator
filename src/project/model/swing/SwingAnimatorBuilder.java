@@ -7,8 +7,9 @@ import java.util.List;
 import project.model.AnimatorBuilder;
 import project.model.Car;
 import project.model.Light;
+import project.model.LightState;
 import project.model.MP;
-import project.model.Road;
+import project.model.RoadSegment;
 import project.util.Animator;
 import project.util.SwingAnimator;
 import project.util.SwingAnimatorPainter;
@@ -38,14 +39,14 @@ public class SwingAnimatorBuilder implements AnimatorBuilder {
     Translator t = new TranslatorWE(x, y, MP.carLength, VP.elementWidth, VP.scaleFactor);
     _painter.addLight(d,t);
   }
-  public void addHorizontalRoad(Road l, int i, int j, boolean eastToWest) {
+  public void addHorizontalRoad(RoadSegment l, int i, int j, boolean eastToWest) {
     double x = skipInit + j*skipRoadCar;
     double y = skipInit + skipRoad + i*skipRoadCar;
     Translator t = eastToWest ? new TranslatorEW(x, y, MP.roadLength, VP.elementWidth, VP.scaleFactor)
                               : new TranslatorWE(x, y, MP.roadLength, VP.elementWidth, VP.scaleFactor);
     _painter.addRoad(l,t);
   }
-  public void addVerticalRoad(Road l, int i, int j, boolean southToNorth) {
+  public void addVerticalRoad(RoadSegment l, int i, int j, boolean southToNorth) {
     double x = skipInit + skipRoad + j*skipRoadCar;
     double y = skipInit + i*skipRoadCar;
     Translator t = southToNorth ? new TranslatorSN(x, y, MP.roadLength, VP.elementWidth, VP.scaleFactor)
@@ -67,17 +68,17 @@ public class SwingAnimatorBuilder implements AnimatorBuilder {
       }
     }
     
-    private List<Element<Road>> _roadElements;
+    private List<Element<RoadSegment>> _roadElements;
     private List<Element<Light>> _lightElements;
     MyPainter() {
-      _roadElements = new ArrayList<Element<Road>>();
+      _roadElements = new ArrayList<Element<RoadSegment>>();
       _lightElements = new ArrayList<Element<Light>>();
     }    
     void addLight(Light x, Translator t) {
       _lightElements.add(new Element<Light>(x,t));
     }
-    void addRoad(Road x, Translator t) {
-      _roadElements.add(new Element<Road>(x,t));
+    void addRoad(RoadSegment x, Translator t) {
+      _roadElements.add(new Element<RoadSegment>(x,t));
     }
     
     public void paint(Graphics g) {
@@ -86,20 +87,22 @@ public class SwingAnimatorBuilder implements AnimatorBuilder {
 
       // First draw the background elements
       for (Element<Light> e : _lightElements) {
-        if (e.x.getState()) {
-          g.setColor(Color.BLUE);
-        } else {
+        if (e.x.getState() == LightState.GreenNS_RedEW) {
+          g.setColor(Color.GREEN);
+        } else if(e.x.getState() == LightState.YellowNS_RedEW) {
           g.setColor(Color.YELLOW);
+        } else {
+          g.setColor(Color.RED);
         }
         XGraphics.fillOval(g, e.t, 0, 0, MP.carLength, VP.elementWidth);
       }
       g.setColor(Color.BLACK);
-      for (Element<Road> e : _roadElements) {
+      for (Element<RoadSegment> e : _roadElements) {
         XGraphics.fillRect(g, e.t, 0, 0, MP.roadLength, VP.elementWidth);
       }
       
       // Then draw the foreground elements
-      for (Element<Road> e : _roadElements) {
+      for (Element<RoadSegment> e : _roadElements) {
         // iterate through a copy because e.x.getCars() may change during iteration...
         for (Car d : e.x.getCars().toArray(new Car[0])) {
           g.setColor(d.getColor());

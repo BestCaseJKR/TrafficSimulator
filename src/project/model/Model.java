@@ -22,7 +22,7 @@ public class Model extends Observable {
    *  The number of <code>rows</code> and <code>columns</code>
    *  indicate the number of {@link Light}s, organized as a 2D
    *  matrix.  These are separated and surrounded by horizontal and
-   *  vertical {@link Road}s.  For example, calling the constructor with 1
+   *  vertical {@link RoadSegment}s.  For example, calling the constructor with 1
    *  row and 2 columns generates a model of the form:
    *  <pre>
    *     |  |
@@ -30,7 +30,7 @@ public class Model extends Observable {
    *     |  |
    *  </pre>
    *  where <code>@</code> is a {@link Light}, <code>|</code> is a
-   *  vertical {@link Road} and <code>--</code> is a horizontal {@link Road}.
+   *  vertical {@link RoadSegment} and <code>--</code> is a horizontal {@link RoadSegment}.
    *  Each road has one {@link Car}.
    *
    *  <p>
@@ -82,46 +82,93 @@ public class Model extends Observable {
    * Construct the model, establishing correspondences with the visualizer.
    */
   private void setup(AnimatorBuilder builder, int rows, int columns) {
-    List<Road> roads = new ArrayList<Road>();
-    Light[][] intersections = new Light[rows][columns];
+    List<RoadSegment> roads = new ArrayList<RoadSegment>();
+    Intersection[][] intersections = new Intersection[rows][columns];
     Boolean reverse;
-
+    Light li;
     // Add Lights
     for (int i=0; i<rows; i++) {
       for (int j=0; j<columns; j++) {
-        intersections[i][j] = new Light();
-        builder.addLight(intersections[i][j], i, j);
-        _agents.add(intersections[i][j]);
+    	li = new Light();
+        intersections[i][j] = new Intersection();
+        intersections[i][j].setLight(li);
+        builder.addLight(li, i, j);
+        _agents.add(li);
       }
     }
 
     // Add Horizontal Roads
     boolean eastToWest = false;
+    DriveableSurface prevSeg = null;
     for (int i=0; i<rows; i++) {
+    	prevSeg = null;	
       for (int j=0; j<=columns; j++) {
-        Road l = new Road();
+        RoadSegment l = new RoadSegment();
+        l.setOrientation(((eastToWest)? DriveableSurfaceOrientation.East_West: DriveableSurfaceOrientation.West_East ));
         builder.addHorizontalRoad(l, i, j, eastToWest);
         roads.add(l);
+        if ((j == 0 && eastToWest == false) || (j == columns && eastToWest )) {
+        	//if this is a brand new road being created, create a source too
+        	Source s = new Source(l, _agents);
+        	//also add it to the agents array because its an agent
+        	_agents.add(s);
+        }
+        if ((j == columns && eastToWest == false) || (j == 0 && eastToWest)) {
+        	Sink sink = new Sink();
+        	l.setNextSeg(sink);
+        }
+        
+        if (prevSeg != null) { 
+        	if(eastToWest) {
+        		l.setNextSeg(prevSeg);
+        	} else {
+        		prevSeg.setNextSeg(l);
+        	}
+        }
+        
+        prevSeg = l;
+      
       }
       eastToWest = !eastToWest;
     }
 
     // Add Vertical Roads
     boolean southToNorth = false;
+    prevSeg = null;
     for (int j=0; j<columns; j++) {
+    	prevSeg = null;
       for (int i=0; i<=rows; i++) {
-        Road l = new Road();
+        RoadSegment l = new RoadSegment();
+        l.setOrientation(((southToNorth)? DriveableSurfaceOrientation.South_North: DriveableSurfaceOrientation.North_South ));
         builder.addVerticalRoad(l, i, j, southToNorth);
         roads.add(l);
+        if ((i == 0 && southToNorth == false) || (i == rows && southToNorth )) {
+        	//if this is a brand new road being created, create a source too
+        	Source source = new Source(l, _agents);
+        	//also add it to the agents array because its an agent
+        	_agents.add(source);
+        }
+        if ((i == rows && southToNorth == false) || (i == 0 && southToNorth)) {
+        	Sink sink = new Sink();
+        	l.setNextSeg(sink);
+        }
+        if (prevSeg != null) { 
+        	if(southToNorth) {
+        		l.setNextSeg(prevSeg);
+        	} else {
+        		prevSeg.setNextSeg(l);
+        	}
+        }
+        prevSeg = l;
       }
       southToNorth = !southToNorth;
     }
 
-    // Add Cars
+/*    // Add Cars
     for (Road l : roads) {
       Car car = new Car();
       _agents.add(car);
       l.accept(car);
-    }
+    } */
   }
 }

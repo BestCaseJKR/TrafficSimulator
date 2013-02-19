@@ -6,14 +6,16 @@ package project.model;
 public class Light implements Agent {
   Light() { } // Created only by this package
   
-  private boolean _state;
+  private LightState _state = LightState.GreenNS_RedEW;
 
-  public boolean getState() {
+  public LightState getState() {
     return _state;
   }
   public void run(double time) {
-    if (time%40==0) {
-      _state = !_state;
+    if (time%_state.getDuration()==0) {
+    	System.out.println("State Changed from " + _state + " to " + _state.getNext());
+    	_state = _state.getNext();
+      
     }
   }
 }
