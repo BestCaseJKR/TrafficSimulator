@@ -43,29 +43,37 @@ public class RoadSegment implements Road {
 	  }
 	  
 	public double requestMove(Car c, double requestedMove) {
-		
+		if ((c.getPosition() + requestedMove) > (MP.roadLength-MP.carLength)) {
+			requestedMove = (MP.roadLength-MP.carLength) - c.getPosition();
+			System.out.println("BEYOND LENGTH OF ROAD1111(" + c.hashCode() + ") " + c.getPosition() + " " + requestedMove);
+			System.out.println(c.toString());
+			
+		}
 		double opening = calculateOpenRoad(c, requestedMove);
 		//System.out.println("Returning RM: " + requestedMove + " pos(" + c.getPosition() + ")");
 		if ((c.getPosition() + requestedMove) > (MP.roadLength-MP.carLength)) {
-			System.out.println("BEYOND LENGTH OF ROAD(" + MP.roadLength + ") " + c.getPosition() + " " + requestedMove);
+			System.out.println("BEYOND LENGTH OF ROAD(" + MP.roadLength + ") " + c.getPosition() + " " + requestedMove + " " + opening);
 			System.out.println(c.toString());
-			return ((c.getPosition() - MP.roadLength) > opening) ? opening : (c.getPosition() - MP.roadLength) ;
+			System.out.println("Return " + (((c.getPosition() - MP.roadLength) > opening) ? opening : (c.getPosition() - MP.roadLength)));
+			return ((c.getPosition() - (MP.roadLength-MP.carLength)) > opening) ? opening : (c.getPosition() - (MP.roadLength-MP.carLength)) ;
 		}
+		System.out.println("Opening = " + opening);
 		return opening;
 	}
 	private double calculateOpenRoad(Car c, double requestedMove) {
 		List<Car> cars = this.getCars();
 		double pos = -1;
-		//System.out.println("Car: " + c.getPosition() + " RM: " + requestedMove);
+		System.out.println("Car(" + c.hashCode() + "): " + c.getPosition() + " RM: " + requestedMove);
 		
 		for	(Car checkCar: cars) {
-			//System.out.println("Check Car: " + checkCar.getPosition());
-			if ((checkCar.getPosition() - MP.carLength) <= (c.getPosition() + requestedMove) && 
-					(checkCar.getPosition() - MP.carLength) >= c.getPosition()	
+			System.out.println("Check Car" + checkCar.hashCode() + "): " + checkCar.getPosition());
+			if (!c.equals(checkCar) &&
+					(checkCar.getPosition() - MP.carLength) <= (c.getPosition() + requestedMove) && 
+					(checkCar.getPosition() - MP.carLength) >= c.getPosition() - MP.carLength	
 			) {
 				double tmpPos = (checkCar.getPosition() - MP.carLength) - c.getPosition();
 				System.out.println("pos tmppos " + pos + " " + tmpPos);
-				if(tmpPos > 0) {
+				if(tmpPos >= 0) {
 					if (pos == -1) {
 						pos = tmpPos;
 					}
@@ -75,7 +83,7 @@ public class RoadSegment implements Road {
 			}
 		}
 		if (pos != -1) {
-			System.out.println("RM: " + requestedMove + " Return: " + pos);
+			//System.out.println("RM: " + requestedMove + " Return: " + pos);
 			return pos;
 		}
 		return requestedMove;

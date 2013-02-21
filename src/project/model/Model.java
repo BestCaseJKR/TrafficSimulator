@@ -167,13 +167,28 @@ public class Model extends Observable {
         	Sink sink = new Sink();
         	l.setNextSeg(sink);
         }
-        if (prevSeg != null) { 
+        if (i == 0) {
         	if(southToNorth) {
-        		l.setNextSeg(prevSeg);
+        		intersections[i][j].setNSRoad(l);
         	} else {
-        		prevSeg.setNextSeg(l);
+        		l.setNextSeg(intersections[i][j]);
+        	}
+        } else if (i == rows) {
+        	if(southToNorth) {
+        		l.setNextSeg(intersections[i-1][j]);
+        	} else {
+        		intersections[i-1][j].setNSRoad(l);
+        	}
+        } else {
+        	if(southToNorth) {
+        		intersections[i][j].setNSRoad(l);
+        		l.setNextSeg(intersections[i-1][j]);
+        	} else {
+        		l.setNextSeg(intersections[i][j]);
+        		intersections[i-1][j].setNSRoad(l);
         	}
         }
+        
         prevSeg = l;
       }
       southToNorth = !southToNorth;
