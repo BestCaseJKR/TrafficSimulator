@@ -7,19 +7,23 @@ package project.model;
  * to the beginning of the road, or reverses its direction.
  */
 public class Car implements Agent {
-  Car(DriveableSurface r) { setCurrentRoad(r); } // Created only by this package
+  Car(Road r) { 
+	  setCurrentRoad(r);
+	  _direction = r.getOrientation();
+  } // Created only by this package
 
   //private boolean _backAndForth = Math.round(Math.random())==1 ? true : false;
+  private RoadOrientation _direction;
   private double _position = 0;
   private double _velocity = (int) Math.ceil(Math.random() * MP.maxVelocity);
-  private DriveableSurface _road;
+  private Road _road;
   private java.awt.Color _color = new java.awt.Color((int)Math.ceil(Math.random()*255),(int)Math.ceil(Math.random()*255),(int)Math.ceil(Math.random()*255));
   
-  public void setCurrentRoad(DriveableSurface road) {
+  public void setCurrentRoad(Road road) {
 	  _position = 0;
 	  _road = road;
   }
-  
+  public Road getCurentRoad() { return _road; }
   public double getPosition() {
     return _position;
   }
@@ -32,8 +36,11 @@ public class Car implements Agent {
 //        _velocity *= -1;
 //    } else {
       if ((_position + _velocity) > (MP.roadLength-MP.carLength)) {
-    	  sendCarToNextSeg();
-    	  return;
+    	  if (sendCarToNextSeg()) {
+    		  return;
+    	  } else {
+    		  System.out.println("REJECTED");
+    	  }
       }
     	  //_position = 0;
  //   }
@@ -41,12 +48,24 @@ public class Car implements Agent {
     //_position += _velocity;
   }
   
-  public void sendCarToNextSeg() {
-	  if (_road.getNextSeg() != null) {
-		  _road.getNextSeg().accept(this);
+  public boolean sendCarToNextSeg() {
+	  if (_road.getNextSeg(this) != null) {
+		  if (!_road.getNextSeg(this).accept(this)) {
+			  return false;
+		  }
 		  _road.remove(this);
-		  this.setCurrentRoad(_road.getNextSeg());
+		  this.setCurrentRoad(_road.getNextSeg(this));
+		  return true;
 	  }   
+	  return false;
+  }
+  
+  public RoadOrientation getOrientation() {
+	  return this._direction;
+  }
+  
+  public String toString() {
+	  return "hs: " + this.hashCode() + " V = " + _velocity + " P = " + this.getPosition();
   }
   
 }

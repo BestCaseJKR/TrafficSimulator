@@ -99,12 +99,13 @@ public class Model extends Observable {
 
     // Add Horizontal Roads
     boolean eastToWest = false;
-    DriveableSurface prevSeg = null;
+    Road prevSeg = null;
     for (int i=0; i<rows; i++) {
     	prevSeg = null;	
       for (int j=0; j<=columns; j++) {
         RoadSegment l = new RoadSegment();
-        l.setOrientation(((eastToWest)? DriveableSurfaceOrientation.East_West: DriveableSurfaceOrientation.West_East ));
+        //l.setOrientation(((eastToWest)? RoadOrientation.East_West: RoadOrientation.West_East ));
+        l.setOrientation(RoadOrientation.East_West);
         builder.addHorizontalRoad(l, i, j, eastToWest);
         roads.add(l);
         if ((j == 0 && eastToWest == false) || (j == columns && eastToWest )) {
@@ -117,12 +118,25 @@ public class Model extends Observable {
         	Sink sink = new Sink();
         	l.setNextSeg(sink);
         }
-        
-        if (prevSeg != null) { 
+        if (j == 0) {
         	if(eastToWest) {
-        		l.setNextSeg(prevSeg);
+        		intersections[i][j].setEWRoad(l);
         	} else {
-        		prevSeg.setNextSeg(l);
+        		l.setNextSeg(intersections[i][j]);
+        	}
+        } else if (j == columns) {
+        	if(eastToWest) {
+        		l.setNextSeg(intersections[i][j-1]);
+        	} else {
+        		intersections[i][j-1].setEWRoad(l);
+        	}
+        } else {
+        	if(eastToWest) {
+        		intersections[i][j].setEWRoad(l);
+        		l.setNextSeg(intersections[i][j-1]);
+        	} else {
+        		l.setNextSeg(intersections[i][j]);
+        		intersections[i][j-1].setEWRoad(l);
         	}
         }
         
@@ -139,7 +153,8 @@ public class Model extends Observable {
     	prevSeg = null;
       for (int i=0; i<=rows; i++) {
         RoadSegment l = new RoadSegment();
-        l.setOrientation(((southToNorth)? DriveableSurfaceOrientation.South_North: DriveableSurfaceOrientation.North_South ));
+        //l.setOrientation(((southToNorth)? RoadOrientation.South_North: RoadOrientation.North_South ));
+        l.setOrientation(RoadOrientation.North_South);
         builder.addVerticalRoad(l, i, j, southToNorth);
         roads.add(l);
         if ((i == 0 && southToNorth == false) || (i == rows && southToNorth )) {
@@ -163,6 +178,7 @@ public class Model extends Observable {
       }
       southToNorth = !southToNorth;
     }
+    
 
 /*    // Add Cars
     for (Road l : roads) {

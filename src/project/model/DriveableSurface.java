@@ -18,11 +18,11 @@ public abstract class DriveableSurface {
 	  }
 	  public DriveableSurface getNextSeg() { return nextSeg; }
 	  
-	  private DriveableSurfaceOrientation _orientation;
-	  public void setOrientation(DriveableSurfaceOrientation o) {
+	  private RoadOrientation _orientation;
+	  public void setOrientation(RoadOrientation o) {
 		  _orientation = o;
 	  }
-	  public DriveableSurfaceOrientation getOrientation() { return _orientation; }
+	  public RoadOrientation getOrientation() { return _orientation; }
 	  
 	  public void accept(Car d) {
 	    if (d == null) { throw new IllegalArgumentException(); }
