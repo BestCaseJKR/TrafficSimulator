@@ -60,6 +60,7 @@ public class Model extends Observable {
     if (_disposed)
       throw new IllegalStateException();
     for (int i=0; i<duration; i++) {
+    	//System.out.println("TIME: " + i);
       _time++;
       // iterate through a copy because _agents may change during iteration...
       for (Agent a : _agents.toArray(new Agent[0])) {

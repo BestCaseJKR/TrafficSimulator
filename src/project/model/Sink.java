@@ -1,10 +1,12 @@
 package project.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Sink implements Agent, Road {
-	private List<Car> _cars = new ArrayList<Car>();
+	private Queue<Car> _cars = new LinkedList<Car>();
 	@Override
 	public void run(double time) {
 		for(Car c: _cars) {
@@ -12,12 +14,6 @@ public class Sink implements Agent, Road {
 			c = null;
 		}
 
-	}
-
-	@Override
-	public double requestMove(Car c, double requestedMove) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -65,6 +61,16 @@ public class Sink implements Agent, Road {
 	public RoadOrientation getOrientation() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Queue<Car> getCars() {
+		return _cars;
+	}
+
+	@Override
+	public double getLength() {
+		return 0;
 	}
 
 }

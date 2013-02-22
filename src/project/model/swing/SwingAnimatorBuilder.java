@@ -36,7 +36,7 @@ public class SwingAnimatorBuilder implements AnimatorBuilder {
   public void addLight(Light d, int i, int j) {
     double x = skipInit + skipRoad + j*skipRoadCar;
     double y = skipInit + skipRoad + i*skipRoadCar;
-    Translator t = new TranslatorWE(x, y, MP.carLength, VP.elementWidth, VP.scaleFactor);
+    Translator t = new TranslatorWE(x, y, MP.baseCarLength, VP.elementWidth, VP.scaleFactor);
     _painter.addLight(d,t);
   }
   public void addHorizontalRoad(RoadSegment l, int i, int j, boolean eastToWest) {
@@ -94,7 +94,7 @@ public class SwingAnimatorBuilder implements AnimatorBuilder {
         } else {
           g.setColor(Color.RED);
         }
-        XGraphics.fillOval(g, e.t, 0, 0, MP.carLength, VP.elementWidth);
+        XGraphics.fillOval(g, e.t, 0, 0, MP.baseCarLength, VP.elementWidth);
       }
       g.setColor(Color.BLACK);
       for (Element<RoadSegment> e : _roadElements) {
@@ -106,7 +106,7 @@ public class SwingAnimatorBuilder implements AnimatorBuilder {
         // iterate through a copy because e.x.getCars() may change during iteration...
         for (Car d : e.x.getCars().toArray(new Car[0])) {
           g.setColor(d.getColor());
-          XGraphics.fillOval(g, e.t, d.getPosition(), 0, MP.carLength, VP.elementWidth);
+          XGraphics.fillOval(g, e.t, d.getPosition(), 0, MP.baseCarLength, VP.elementWidth);
         }
       }
     }

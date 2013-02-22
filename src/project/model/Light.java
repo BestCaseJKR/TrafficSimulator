@@ -13,7 +13,6 @@ public class Light implements Agent {
   }
   public void run(double time) {
     if (time%_state.getDuration()==0) {
-    	System.out.println("State Changed from " + _state + " to " + _state.getNext());
     	_state = _state.getNext();
       
     }

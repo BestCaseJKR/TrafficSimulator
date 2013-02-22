@@ -1,7 +1,9 @@
 package project.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Intersection implements Road {
 	
@@ -21,7 +23,9 @@ public class Intersection implements Road {
 	public void setEWRoad(Road r) {
 		_ewRoad = r;
 	}
-
+	
+	private double _length = MP.intersectionLength.getDoubleInRange();
+	
 	private Light _light;
 	public void setLight(Light l) {
 		_light = l;
@@ -30,12 +34,8 @@ public class Intersection implements Road {
 		return _light;
 	}
 
-	private List<Car> _cars = new ArrayList<Car>();
+	private Queue<Car> _cars = new LinkedList<Car>();
 	
-	@Override
-	public double requestMove(Car c, double requestedMove) {
-		return requestedMove;
-	}
 	@Override
 	public boolean isDriveable(Car c) {
 		return c.getOrientation().equals(_light.getState().getAllowedOrientation());
@@ -45,7 +45,6 @@ public class Intersection implements Road {
 		// TODO Check light and decide to accept
 	    if (d == null) { throw new IllegalArgumentException(); }
 	    if (!isDriveable(d))  {
-	    	System.out.println("NOT DRIVEABLE");
 	    	return false;
 	    }
 	    _cars.add(d);
@@ -75,6 +74,14 @@ public class Intersection implements Road {
 	public RoadOrientation getOrientation() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	@Override
+	public Queue<Car> getCars() {
+		return _cars;
+	}
+	@Override
+	public double getLength() {
+		return _length;
 	}
 
 }

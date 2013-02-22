@@ -1,5 +1,7 @@
 package project.model;
 
+import java.util.Queue;
+
 public interface Road {
 
 	public boolean isDriveable(Car c);
@@ -7,8 +9,6 @@ public interface Road {
 	public boolean accept(Car d);
 	
 	public void remove(Car d);
-	
-	public double requestMove(Car c, double requestedMove);
 		
 	public void setNextSeg(Road next);
 	
@@ -17,4 +17,9 @@ public interface Road {
 	public void setOrientation(RoadOrientation o);
 	
 	public RoadOrientation getOrientation();
+	
+	public Queue<Car> getCars();
+	
+	public double getLength();
+	
 }

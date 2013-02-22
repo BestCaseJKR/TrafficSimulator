@@ -8,7 +8,7 @@ import project.model.MP;
 class VP {
   private VP() {}
   /** Width of model elements, in meters */
-  static double elementWidth = MP.carLength;
+  static double elementWidth = MP.baseCarLength;
   /** Gap between model elements, in meters */
   static double gap = 1;
   /** Width of the displayed graphics window, in pixels */
