@@ -12,7 +12,6 @@ public class Car implements Agent {
   Car(Road r) { 
 	  setCurrentRoad(r, 0);
 	  _direction = r.getOrientation();
-	  System.out.println("Car Created: " + this);
   } // Created only by this package
 
   //private boolean _backAndForth = Math.round(Math.random())==1 ? true : false;
@@ -26,7 +25,6 @@ public class Car implements Agent {
   public void setCurrentRoad(Road road, double requestedPostion) {
 	  
 	  _road = road;
-	  _position = 0;
 	  _position = requestMove(requestedPostion);
   }
   public Road getCurentRoad() { return _road; }
@@ -77,9 +75,9 @@ public class Car implements Agent {
 		  }
 		  _road.remove(this);
 		  this.setCurrentRoad(_road.getNextSeg(this), requestedPostion);
-		  System.out.println("Car: " + this);
-		  System.out.println("Entered Road: " + this.getCurentRoad());
-		  System.out.println("CR Cars: " + this.getCurentRoad().getCars());
+		  //System.out.println("Car: " + this);
+		  //System.out.println("Entered Road: " + this.getCurentRoad());
+		  //System.out.println("CR Cars: " + this.getCurentRoad().getCars());
 		  
 		  return true;
 	  }   
@@ -101,7 +99,7 @@ public class Car implements Agent {
 		}
 		double opening = calculateOpenRoad(requestedMove);
 		if ((this.getPosition() + requestedMove) > (MP.roadLength-this.getLength())) {
-			return ((this.getPosition() - (MP.roadLength-this.getLength())) > opening) ? opening : (this.getPosition() - (MP.roadLength-this.getLength())) ;
+			return ((this.getPosition()  - (MP.roadLength-this.getLength())) > opening) ? opening : (this.getPosition()   - (MP.roadLength-this.getLength())) ;
 		}
 		return opening;
 	}
@@ -130,6 +128,10 @@ public class Car implements Agent {
 			//System.out.println("RM: " + requestedMove + " Return: " + pos);
 			return pos;
 		}
+		if (pos < 0 && pos != -1) {
+			System.out.println("WTF " + pos);
+			System.exit(1);
+		}
 		return requestedMove;
 	}
   
@@ -141,6 +143,7 @@ public class Car implements Agent {
 		}
 		for (Car c: cars) {
 			if ((c.getPosition() - c.getLength()) <= this.getLength()) {
+				System.out.println("Not Enough Room for " + this + " b/c " + cars);
 				return false;
 			}
 		}

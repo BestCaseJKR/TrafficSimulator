@@ -84,4 +84,8 @@ public class Intersection implements Road {
 		return _length;
 	}
 
+	public String toString() {
+		
+	}
+	
 }

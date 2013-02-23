@@ -17,7 +17,7 @@ public class MP {
   public static Range intersectionLength = new Range(10,15);
   public static Range carLength = new Range(5,10);
   /** Maximum car velocity, in meters/second */
-  public static Range maxVelocity = new Range(10, 30);
+  public static Range maxVelocity = new Range(1, 5);
   public static Range carStopDistance = new Range(0.5,5);
   public static Range trafficLightGreenTime = new Range(30,180);
   public static Range trafficLightYellowTime = new Range(4,5);
